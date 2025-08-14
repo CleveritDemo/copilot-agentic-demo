@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task List CleverIT Demo</title>
+  <!-- Google Fonts: Roboto for Material Design look -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <h1>Task List</h1>
+    <button id="themeToggle" class="theme-toggle" title="Switch between light and dark mode">🌙</button>
+  </div>
+  <form id="taskForm">
+    <input type="text" id="taskInput" placeholder="New task" required />
+    <button type="submit" title="Click to add a new task to the list">Add Task</button>
+  </form>
+  <ul id="taskList"></ul>
+  <script src="script.js"></script>
+</body>
+</html>
