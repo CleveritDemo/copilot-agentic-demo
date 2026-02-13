@@ -34,14 +34,14 @@ Para este ejemplo, utiliza el siguiente texto como título del issue:
 
 **Título del issue**
 ```
-Modify the accent colors on every single component on the application the current color is blue, change it from blue to dark green.
+Modifica los colores de acento en cada uno de los componentes de la aplicación; el color actual es azul, cámbialo de azul a verde oscuro.
 ```
 
 Y si quieres añadir más contexto al agente, completa el campo de descripción para ayudar al agente de IA con más información.
 
 **Descripción del issue**
 ```
-Please keep in mind that all changes must be done for both look and feels of the app dark mode and light mode.
+Por favor, ten en cuenta que todos los cambios deben realizarse para ambos aspectos de la aplicación: modo oscuro y modo claro.
 ```
 
 **Ejemplo**
@@ -89,11 +89,11 @@ Ahora abre **VS Code**, abre el Chat de GitHub Copilot en modo Agente y utiliza 
 
 **Prompt de Copilot**
 ```
-Improve #about.md file to include more advanced documentation of the project. Include sections indicating: Which are the runtimes and frameworks used in this project, explain in a detailed way how to execute the project and how it can be accessed through the browser.
+Mejora el archivo #about.md para incluir documentación avanzada del proyecto. Incluye secciones que indiquen: cuáles son los runtimes y frameworks utilizados, explica detalladamente cómo ejecutar el proyecto y cómo acceder a él a través del navegador. 🌐
 
-Use a technical language kept in mind a target audience such as Developers, sysadmins, DevOps Engineers and Cloud Engineers.
+Utiliza un lenguaje técnico orientado a un público objetivo de Desarrolladores, Sysadmins, Ingenieros DevOps e Ingenieros Cloud. 🛠️☁️
 
-Include emojis and icons whenever necessary.
+Incluye emojis e iconos cuando sea necesario. ✨
 ```
 El Chat de GitHub Copilot comenzará a realizar algunos cambios en el archivo [about](about.md). Verás algo como esto:
 
@@ -143,7 +143,7 @@ Copilot comenzará a indexar los archivos y, una vez que haya terminado, podremo
 Pruébalo preguntándole a GitHub Copilot Spaces lo siguiente:
 
 ```
-How can I execute this project and what are the runtimes of copilot-agentic-demo
+¿Cómo puedo ejecutar este proyecto y cuáles son los entornos de ejecución (runtimes) de copilot-agentic-demo?
 ```
 
 ### 🧠 Paso 3. Uso de GitHub Copilot Coding Agent (Parte 2).
