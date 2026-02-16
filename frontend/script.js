@@ -65,15 +65,13 @@ function addTaskToDOM(task) {
 taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
-  const res = await fetch(API_URL, {
+  await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title })
   });
-  const task = await res.json();
-  allTasks.push(task);
-  renderTasks();
   taskInput.value = '';
+  fetchTasks();
 });
 
 async function toggleComplete(id, completed) {
