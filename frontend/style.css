@@ -87,9 +87,8 @@ form {
   display: flex;
   gap: 12px;
   margin-bottom: 1.5em;
-  flex-wrap: wrap;
 }
-#taskInput, #categoryInput {
+#taskInput {
   flex: 1;
   padding: 0.75em 1em;
   border: none;
@@ -100,12 +99,8 @@ form {
   font-size: 1em;
   outline: none;
   transition: box-shadow 0.2s;
-  min-width: 150px;
 }
-#categoryInput {
-  flex: 0.6;
-}
-#taskInput:focus, #categoryInput:focus {
+#taskInput:focus {
   box-shadow: 0 2px 8px var(--input-focus-shadow);
 }
 button[type="submit"] {
@@ -149,15 +144,10 @@ li span {
   color: var(--text-color);
   transition: color 0.2s;
 }
-.category {
-  font-size: 0.85em;
-  color: var(--primary-color);
-  font-weight: 500;
-  margin-left: 8px;
-}
 .completed {
   text-decoration: line-through;
   color: var(--completed-color);
+}
 }
 li div {
   display: flex;

@@ -2,12 +2,10 @@ const API_URL = 'http://localhost:3000/api/tasks';
 const taskList = document.getElementById('taskList');
 const taskForm = document.getElementById('taskForm');
 const taskInput = document.getElementById('taskInput');
-const categoryInput = document.getElementById('categoryInput');
 const themeToggle = document.getElementById('themeToggle');
 const editModal = document.getElementById('editModal');
 const editForm = document.getElementById('editForm');
 const editTaskInput = document.getElementById('editTaskInput');
-const editCategoryInput = document.getElementById('editCategoryInput');
 const cancelBtn = document.querySelector('#editModal .cancel-btn');
 
 let currentEditingTaskId = null;
@@ -52,22 +50,13 @@ function addTaskToDOM(task) {
   }
   taskSpan.textContent = task.title;
   
-  // Add category label if present
-  if (task.category) {
-    const categorySpan = document.createElement('span');
-    categorySpan.className = 'category';
-    categorySpan.textContent = `[${task.category}]`;
-    taskSpan.appendChild(document.createTextNode(' '));
-    taskSpan.appendChild(categorySpan);
-  }
-  
   // Create buttons container
   const buttonsDiv = document.createElement('div');
   
   // Edit button
   const editBtn = document.createElement('button');
   editBtn.textContent = '✏️';
-  editBtn.addEventListener('click', () => openEditModal(task.id, task.title, task.category || ''));
+  editBtn.addEventListener('click', () => openEditModal(task.id, task.title));
   
   // Complete button
   const completeBtn = document.createElement('button');
@@ -91,13 +80,12 @@ function addTaskToDOM(task) {
 taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
-  const category = categoryInput.value;
   
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, category })
+      body: JSON.stringify({ title })
     });
     
     if (!res.ok) {
@@ -109,7 +97,6 @@ taskForm.addEventListener('submit', async e => {
     const task = await res.json();
     addTaskToDOM(task);
     taskInput.value = '';
-    categoryInput.value = '';
   } catch (error) {
     alert('Failed to create task. Please try again.');
     console.error('Error creating task:', error);
@@ -153,10 +140,9 @@ async function deleteTask(id) {
   }
 }
 
-function openEditModal(id, title, category = '') {
+function openEditModal(id, title) {
   currentEditingTaskId = id;
   editTaskInput.value = title;
-  editCategoryInput.value = category;
   editModal.style.display = 'flex';
 }
 
@@ -164,7 +150,6 @@ function closeEditModal() {
   editModal.style.display = 'none';
   currentEditingTaskId = null;
   editTaskInput.value = '';
-  editCategoryInput.value = '';
 }
 
 editForm.addEventListener('submit', async e => {
@@ -172,13 +157,12 @@ editForm.addEventListener('submit', async e => {
   if (!currentEditingTaskId) return;
   
   const title = editTaskInput.value;
-  const category = editCategoryInput.value;
   
   try {
     const res = await fetch(`${API_URL}/${currentEditingTaskId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, category })
+      body: JSON.stringify({ title })
     });
     
     if (!res.ok) {
