@@ -8,6 +8,7 @@ const editModal = document.getElementById('editModal');
 const editForm = document.getElementById('editForm');
 const editTaskInput = document.getElementById('editTaskInput');
 const editCategoryInput = document.getElementById('editCategoryInput');
+const cancelBtn = document.querySelector('#editModal .cancel-btn');
 
 let currentEditingTaskId = null;
 
@@ -195,7 +196,7 @@ editForm.addEventListener('submit', async e => {
 });
 
 // Add cancel button event listener
-document.querySelector('.cancel-btn').addEventListener('click', closeEditModal);
+cancelBtn.addEventListener('click', closeEditModal);
 
 // Close modal when clicking outside
 editModal.addEventListener('click', e => {
