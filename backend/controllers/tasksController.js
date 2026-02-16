@@ -3,6 +3,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const filePath = path.join(__dirname, '../data/tasks.json');
+const VALID_CATEGORIES = ['High', 'Medium', 'Low'];
 
 function readTasks() {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -19,8 +20,7 @@ exports.getAllTasks = (req, res) => {
 exports.createTask = (req, res) => {
   const tasks = readTasks();
   const { title, completed = false, category = 'Medium' } = req.body;
-  const validCategories = ['High', 'Medium', 'Low'];
-  const taskCategory = validCategories.includes(category) ? category : 'Medium';
+  const taskCategory = VALID_CATEGORIES.includes(category) ? category : 'Medium';
   const newTask = { id: uuidv4(), title, completed, category: taskCategory };
   tasks.push(newTask);
   writeTasks(tasks);
@@ -35,8 +35,7 @@ exports.updateTask = (req, res) => {
   task.title = req.body.title ?? task.title;
   task.completed = req.body.completed ?? task.completed;
   if (req.body.category) {
-    const validCategories = ['High', 'Medium', 'Low'];
-    task.category = validCategories.includes(req.body.category) ? req.body.category : task.category;
+    task.category = VALID_CATEGORIES.includes(req.body.category) ? req.body.category : task.category;
   }
   writeTasks(tasks);
   res.json(task);
