@@ -18,8 +18,10 @@ exports.getAllTasks = (req, res) => {
 
 exports.createTask = (req, res) => {
   const tasks = readTasks();
-  const { title, completed = false } = req.body;
-  const newTask = { id: uuidv4(), title, completed };
+  const { title, completed = false, category = 'Medium' } = req.body;
+  const validCategories = ['High', 'Medium', 'Low'];
+  const taskCategory = validCategories.includes(category) ? category : 'Medium';
+  const newTask = { id: uuidv4(), title, completed, category: taskCategory };
   tasks.push(newTask);
   writeTasks(tasks);
   res.status(201).json(newTask);
@@ -32,6 +34,10 @@ exports.updateTask = (req, res) => {
 
   task.title = req.body.title ?? task.title;
   task.completed = req.body.completed ?? task.completed;
+  if (req.body.category) {
+    const validCategories = ['High', 'Medium', 'Low'];
+    task.category = validCategories.includes(req.body.category) ? req.body.category : task.category;
+  }
   writeTasks(tasks);
   res.json(task);
 };
