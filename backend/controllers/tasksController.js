@@ -19,7 +19,20 @@ exports.getAllTasks = (req, res) => {
 exports.createTask = (req, res) => {
   const tasks = readTasks();
   const { title, completed = false } = req.body;
-  const newTask = { id: uuidv4(), title, completed };
+  
+  // Validate title
+  if (!title || typeof title !== 'string' || title.trim().length === 0) {
+    return res.status(400).json({ message: 'Title is required and must be a non-empty string' });
+  }
+  if (title.length > 500) {
+    return res.status(400).json({ message: 'Title must not exceed 500 characters' });
+  }
+  
+  const newTask = { 
+    id: uuidv4(), 
+    title: title.trim(), 
+    completed: Boolean(completed)
+  };
   tasks.push(newTask);
   writeTasks(tasks);
   res.status(201).json(newTask);
@@ -30,8 +43,22 @@ exports.updateTask = (req, res) => {
   const task = tasks.find(t => t.id === req.params.id);
   if (!task) return res.status(404).json({ message: 'Task not found' });
 
-  task.title = req.body.title ?? task.title;
-  task.completed = req.body.completed ?? task.completed;
+  // Validate title if provided
+  if (req.body.title !== undefined) {
+    if (typeof req.body.title !== 'string' || req.body.title.trim().length === 0) {
+      return res.status(400).json({ message: 'Title must be a non-empty string' });
+    }
+    if (req.body.title.length > 500) {
+      return res.status(400).json({ message: 'Title must not exceed 500 characters' });
+    }
+    task.title = req.body.title.trim();
+  }
+  
+  // Update completed status if provided
+  if (req.body.completed !== undefined) {
+    task.completed = Boolean(req.body.completed);
+  }
+  
   writeTasks(tasks);
   res.json(task);
 };

@@ -3,6 +3,12 @@ const taskList = document.getElementById('taskList');
 const taskForm = document.getElementById('taskForm');
 const taskInput = document.getElementById('taskInput');
 const themeToggle = document.getElementById('themeToggle');
+const editModal = document.getElementById('editModal');
+const editForm = document.getElementById('editForm');
+const editTaskInput = document.getElementById('editTaskInput');
+const cancelBtn = document.querySelector('#editModal .cancel-btn');
+
+let currentEditingTaskId = null;
 
 // Theme functionality
 function initTheme() {
@@ -36,41 +42,151 @@ async function fetchTasks() {
 
 function addTaskToDOM(task) {
   const li = document.createElement('li');
-  li.innerHTML = `
-    <span class="${task.completed ? 'completed' : ''}">${task.title}</span>
-    <div>
-      <button onclick="toggleComplete('${task.id}', ${!task.completed})">✓</button>
-      <button onclick="deleteTask('${task.id}')">✕</button>
-    </div>
-  `;
+  
+  // Create task text span
+  const taskSpan = document.createElement('span');
+  if (task.completed) {
+    taskSpan.className = 'completed';
+  }
+  taskSpan.textContent = task.title;
+  
+  // Create buttons container
+  const buttonsDiv = document.createElement('div');
+  
+  // Edit button
+  const editBtn = document.createElement('button');
+  editBtn.textContent = '✏️';
+  editBtn.addEventListener('click', () => openEditModal(task.id, task.title));
+  
+  // Complete button
+  const completeBtn = document.createElement('button');
+  completeBtn.textContent = '✓';
+  completeBtn.addEventListener('click', () => toggleComplete(task.id, !task.completed));
+  
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '✕';
+  deleteBtn.addEventListener('click', () => deleteTask(task.id));
+  
+  buttonsDiv.appendChild(editBtn);
+  buttonsDiv.appendChild(completeBtn);
+  buttonsDiv.appendChild(deleteBtn);
+  
+  li.appendChild(taskSpan);
+  li.appendChild(buttonsDiv);
   taskList.appendChild(li);
 }
 
 taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title })
-  });
-  const task = await res.json();
-  addTaskToDOM(task);
-  taskInput.value = '';
+  
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to create task'}`);
+      return;
+    }
+    
+    const task = await res.json();
+    addTaskToDOM(task);
+    taskInput.value = '';
+  } catch (error) {
+    alert('Failed to create task. Please try again.');
+    console.error('Error creating task:', error);
+  }
 });
 
 async function toggleComplete(id, completed) {
-  await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ completed })
-  });
-  fetchTasks();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to update task'}`);
+      return;
+    }
+    
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to update task. Please try again.');
+    console.error('Error updating task:', error);
+  }
 }
 
 async function deleteTask(id) {
-  await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-  fetchTasks();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    
+    if (!res.ok) {
+      alert('Failed to delete task. Please try again.');
+      return;
+    }
+    
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to delete task. Please try again.');
+    console.error('Error deleting task:', error);
+  }
 }
+
+function openEditModal(id, title) {
+  currentEditingTaskId = id;
+  editTaskInput.value = title;
+  editModal.style.display = 'flex';
+}
+
+function closeEditModal() {
+  editModal.style.display = 'none';
+  currentEditingTaskId = null;
+  editTaskInput.value = '';
+}
+
+editForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!currentEditingTaskId) return;
+  
+  const title = editTaskInput.value;
+  
+  try {
+    const res = await fetch(`${API_URL}/${currentEditingTaskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to update task'}`);
+      return;
+    }
+    
+    closeEditModal();
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to update task. Please try again.');
+    console.error('Error updating task:', error);
+  }
+});
+
+// Add cancel button event listener
+cancelBtn.addEventListener('click', closeEditModal);
+
+// Close modal when clicking outside
+editModal.addEventListener('click', e => {
+  if (e.target === editModal) {
+    closeEditModal();
+  }
+});
 
 fetchTasks();

@@ -1,7 +1,27 @@
 [
   {
     "id": "c465b987-0d98-45b5-820b-6a7348856cf4",
-    "title": "Change form style",
+    "title": "Updated: Change form style",
+    "completed": false
+  },
+  {
+    "id": "95e8aaff-966d-405f-9dcd-5b040ed4a09f",
+    "title": "Buy groceries for the week",
+    "completed": false
+  },
+  {
+    "id": "c4c052af-85d2-48ae-9a2e-f45367bb683a",
+    "title": "Complete project documentation",
+    "completed": false
+  },
+  {
+    "id": "eb0ecfa8-6642-43d3-bce2-7e1f3046baec",
+    "title": "Updated task title",
+    "completed": false
+  },
+  {
+    "id": "8720eb37-f1fa-4302-b912-0973ecb730cd",
+    "title": "Test new task without category",
     "completed": false
   }
 ]
