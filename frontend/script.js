@@ -147,6 +147,9 @@ editForm.addEventListener('submit', async e => {
   fetchTasks();
 });
 
+// Add cancel button event listener
+document.querySelector('.cancel-btn').addEventListener('click', closeEditModal);
+
 // Close modal when clicking outside
 editModal.addEventListener('click', e => {
   if (e.target === editModal) {

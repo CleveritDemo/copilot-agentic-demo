@@ -28,19 +28,24 @@ exports.createTask = (req, res) => {
     return res.status(400).json({ message: 'Title must not exceed 500 characters' });
   }
   
-  // Validate category
+  // Validate and process category
+  let processedCategory = '';
   if (category && typeof category !== 'string') {
     return res.status(400).json({ message: 'Category must be a string' });
   }
-  if (category && category.length > 100) {
-    return res.status(400).json({ message: 'Category must not exceed 100 characters' });
+  if (category) {
+    const trimmedCategory = category.trim();
+    if (trimmedCategory.length > 100) {
+      return res.status(400).json({ message: 'Category must not exceed 100 characters' });
+    }
+    processedCategory = trimmedCategory;
   }
   
   const newTask = { 
     id: uuidv4(), 
     title: title.trim(), 
     completed: Boolean(completed), 
-    category: category ? category.trim() : '' 
+    category: processedCategory
   };
   tasks.push(newTask);
   writeTasks(tasks);
@@ -63,15 +68,16 @@ exports.updateTask = (req, res) => {
     task.title = req.body.title.trim();
   }
   
-  // Validate category if provided
+  // Validate and process category if provided
   if (req.body.category !== undefined) {
     if (typeof req.body.category !== 'string') {
       return res.status(400).json({ message: 'Category must be a string' });
     }
-    if (req.body.category.length > 100) {
+    const trimmedCategory = req.body.category.trim();
+    if (trimmedCategory.length > 100) {
       return res.status(400).json({ message: 'Category must not exceed 100 characters' });
     }
-    task.category = req.body.category.trim();
+    task.category = trimmedCategory;
   }
   
   // Update completed status if provided
