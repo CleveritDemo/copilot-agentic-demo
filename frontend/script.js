@@ -43,15 +43,47 @@ async function fetchTasks() {
 
 function addTaskToDOM(task) {
   const li = document.createElement('li');
-  const categoryLabel = task.category ? `<span class="category">[${task.category}]</span>` : '';
-  li.innerHTML = `
-    <span class="${task.completed ? 'completed' : ''}">${task.title} ${categoryLabel}</span>
-    <div>
-      <button onclick="openEditModal('${task.id}', '${task.title.replace(/'/g, "\\'")}', '${(task.category || '').replace(/'/g, "\\'")}')">✏️</button>
-      <button onclick="toggleComplete('${task.id}', ${!task.completed})">✓</button>
-      <button onclick="deleteTask('${task.id}')">✕</button>
-    </div>
-  `;
+  
+  // Create task text span
+  const taskSpan = document.createElement('span');
+  if (task.completed) {
+    taskSpan.className = 'completed';
+  }
+  taskSpan.textContent = task.title;
+  
+  // Add category label if present
+  if (task.category) {
+    const categorySpan = document.createElement('span');
+    categorySpan.className = 'category';
+    categorySpan.textContent = `[${task.category}]`;
+    taskSpan.appendChild(document.createTextNode(' '));
+    taskSpan.appendChild(categorySpan);
+  }
+  
+  // Create buttons container
+  const buttonsDiv = document.createElement('div');
+  
+  // Edit button
+  const editBtn = document.createElement('button');
+  editBtn.textContent = '✏️';
+  editBtn.addEventListener('click', () => openEditModal(task.id, task.title, task.category || ''));
+  
+  // Complete button
+  const completeBtn = document.createElement('button');
+  completeBtn.textContent = '✓';
+  completeBtn.addEventListener('click', () => toggleComplete(task.id, !task.completed));
+  
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '✕';
+  deleteBtn.addEventListener('click', () => deleteTask(task.id));
+  
+  buttonsDiv.appendChild(editBtn);
+  buttonsDiv.appendChild(completeBtn);
+  buttonsDiv.appendChild(deleteBtn);
+  
+  li.appendChild(taskSpan);
+  li.appendChild(buttonsDiv);
   taskList.appendChild(li);
 }
 

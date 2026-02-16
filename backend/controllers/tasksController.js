@@ -19,7 +19,29 @@ exports.getAllTasks = (req, res) => {
 exports.createTask = (req, res) => {
   const tasks = readTasks();
   const { title, completed = false, category = '' } = req.body;
-  const newTask = { id: uuidv4(), title, completed, category };
+  
+  // Validate title
+  if (!title || typeof title !== 'string' || title.trim().length === 0) {
+    return res.status(400).json({ message: 'Title is required and must be a non-empty string' });
+  }
+  if (title.length > 500) {
+    return res.status(400).json({ message: 'Title must not exceed 500 characters' });
+  }
+  
+  // Validate category
+  if (category && typeof category !== 'string') {
+    return res.status(400).json({ message: 'Category must be a string' });
+  }
+  if (category && category.length > 100) {
+    return res.status(400).json({ message: 'Category must not exceed 100 characters' });
+  }
+  
+  const newTask = { 
+    id: uuidv4(), 
+    title: title.trim(), 
+    completed: Boolean(completed), 
+    category: category ? category.trim() : '' 
+  };
   tasks.push(newTask);
   writeTasks(tasks);
   res.status(201).json(newTask);
@@ -30,9 +52,33 @@ exports.updateTask = (req, res) => {
   const task = tasks.find(t => t.id === req.params.id);
   if (!task) return res.status(404).json({ message: 'Task not found' });
 
-  task.title = req.body.title ?? task.title;
-  task.completed = req.body.completed ?? task.completed;
-  task.category = req.body.category ?? task.category;
+  // Validate title if provided
+  if (req.body.title !== undefined) {
+    if (typeof req.body.title !== 'string' || req.body.title.trim().length === 0) {
+      return res.status(400).json({ message: 'Title must be a non-empty string' });
+    }
+    if (req.body.title.length > 500) {
+      return res.status(400).json({ message: 'Title must not exceed 500 characters' });
+    }
+    task.title = req.body.title.trim();
+  }
+  
+  // Validate category if provided
+  if (req.body.category !== undefined) {
+    if (typeof req.body.category !== 'string') {
+      return res.status(400).json({ message: 'Category must be a string' });
+    }
+    if (req.body.category.length > 100) {
+      return res.status(400).json({ message: 'Category must not exceed 100 characters' });
+    }
+    task.category = req.body.category.trim();
+  }
+  
+  // Update completed status if provided
+  if (req.body.completed !== undefined) {
+    task.completed = Boolean(req.body.completed);
+  }
+  
   writeTasks(tasks);
   res.json(task);
 };

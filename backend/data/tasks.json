@@ -3,5 +3,17 @@
     "id": "c465b987-0d98-45b5-820b-6a7348856cf4",
     "title": "Change form style",
     "completed": false
+  },
+  {
+    "id": "95e8aaff-966d-405f-9dcd-5b040ed4a09f",
+    "title": "Buy groceries for the week",
+    "completed": false,
+    "category": "Shopping"
+  },
+  {
+    "id": "c4c052af-85d2-48ae-9a2e-f45367bb683a",
+    "title": "Complete project documentation",
+    "completed": false,
+    "category": "Work"
   }
 ]
