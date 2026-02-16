@@ -3,6 +3,9 @@ const taskList = document.getElementById('taskList');
 const taskForm = document.getElementById('taskForm');
 const taskInput = document.getElementById('taskInput');
 const themeToggle = document.getElementById('themeToggle');
+const filterInput = document.getElementById('filterInput');
+
+let allTasks = [];
 
 // Theme functionality
 function initTheme() {
@@ -24,14 +27,27 @@ function toggleTheme() {
 
 themeToggle.addEventListener('click', toggleTheme);
 
+// Filter functionality
+filterInput.addEventListener('input', renderTasks);
+
 // Initialize theme on page load
 initTheme();
 
 async function fetchTasks() {
   const res = await fetch(API_URL);
   const tasks = await res.json();
+  allTasks = tasks;
+  renderTasks();
+}
+
+function renderTasks() {
+  const filterText = filterInput.value.toLowerCase();
+  const filteredTasks = allTasks.filter(task => 
+    task.title.toLowerCase().includes(filterText)
+  );
+  
   taskList.innerHTML = '';
-  tasks.forEach(addTaskToDOM);
+  filteredTasks.forEach(addTaskToDOM);
 }
 
 function addTaskToDOM(task) {
@@ -49,14 +65,13 @@ function addTaskToDOM(task) {
 taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
-  const res = await fetch(API_URL, {
+  await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title })
   });
-  const task = await res.json();
-  addTaskToDOM(task);
   taskInput.value = '';
+  fetchTasks();
 });
 
 async function toggleComplete(id, completed) {
