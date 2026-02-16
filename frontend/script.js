@@ -152,10 +152,10 @@ async function deleteTask(id) {
   }
 }
 
-function openEditModal(id, title, category) {
+function openEditModal(id, title, category = '') {
   currentEditingTaskId = id;
   editTaskInput.value = title;
-  editCategoryInput.value = category || '';
+  editCategoryInput.value = category;
   editModal.style.display = 'flex';
 }
 

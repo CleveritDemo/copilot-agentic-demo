@@ -30,10 +30,10 @@ exports.createTask = (req, res) => {
   
   // Validate and process category
   let processedCategory = '';
-  if (category !== undefined && category !== null && typeof category !== 'string') {
-    return res.status(400).json({ message: 'Category must be a string' });
-  }
-  if (category) {
+  if (category !== undefined && category !== null) {
+    if (typeof category !== 'string') {
+      return res.status(400).json({ message: 'Category must be a string' });
+    }
     const trimmedCategory = category.trim();
     if (trimmedCategory.length > 100) {
       return res.status(400).json({ message: 'Category must not exceed 100 characters' });
