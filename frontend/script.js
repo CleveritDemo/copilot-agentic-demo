@@ -2,7 +2,14 @@ const API_URL = 'http://localhost:3000/api/tasks';
 const taskList = document.getElementById('taskList');
 const taskForm = document.getElementById('taskForm');
 const taskInput = document.getElementById('taskInput');
+const categoryInput = document.getElementById('categoryInput');
 const themeToggle = document.getElementById('themeToggle');
+const editModal = document.getElementById('editModal');
+const editForm = document.getElementById('editForm');
+const editTaskInput = document.getElementById('editTaskInput');
+const editCategoryInput = document.getElementById('editCategoryInput');
+
+let currentEditingTaskId = null;
 
 // Theme functionality
 function initTheme() {
@@ -36,9 +43,11 @@ async function fetchTasks() {
 
 function addTaskToDOM(task) {
   const li = document.createElement('li');
+  const categoryLabel = task.category ? `<span class="category">[${task.category}]</span>` : '';
   li.innerHTML = `
-    <span class="${task.completed ? 'completed' : ''}">${task.title}</span>
+    <span class="${task.completed ? 'completed' : ''}">${task.title} ${categoryLabel}</span>
     <div>
+      <button onclick="openEditModal('${task.id}', '${task.title.replace(/'/g, "\\'")}', '${(task.category || '').replace(/'/g, "\\'")}')">✏️</button>
       <button onclick="toggleComplete('${task.id}', ${!task.completed})">✓</button>
       <button onclick="deleteTask('${task.id}')">✕</button>
     </div>
@@ -49,14 +58,16 @@ function addTaskToDOM(task) {
 taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
+  const category = categoryInput.value;
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title })
+    body: JSON.stringify({ title, category })
   });
   const task = await res.json();
   addTaskToDOM(task);
   taskInput.value = '';
+  categoryInput.value = '';
 });
 
 async function toggleComplete(id, completed) {
@@ -72,5 +83,43 @@ async function deleteTask(id) {
   await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
   fetchTasks();
 }
+
+function openEditModal(id, title, category) {
+  currentEditingTaskId = id;
+  editTaskInput.value = title;
+  editCategoryInput.value = category || '';
+  editModal.style.display = 'flex';
+}
+
+function closeEditModal() {
+  editModal.style.display = 'none';
+  currentEditingTaskId = null;
+  editTaskInput.value = '';
+  editCategoryInput.value = '';
+}
+
+editForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!currentEditingTaskId) return;
+  
+  const title = editTaskInput.value;
+  const category = editCategoryInput.value;
+  
+  await fetch(`${API_URL}/${currentEditingTaskId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, category })
+  });
+  
+  closeEditModal();
+  fetchTasks();
+});
+
+// Close modal when clicking outside
+editModal.addEventListener('click', e => {
+  if (e.target === editModal) {
+    closeEditModal();
+  }
+});
 
 fetchTasks();
