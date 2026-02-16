@@ -91,29 +91,65 @@ taskForm.addEventListener('submit', async e => {
   e.preventDefault();
   const title = taskInput.value;
   const category = categoryInput.value;
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, category })
-  });
-  const task = await res.json();
-  addTaskToDOM(task);
-  taskInput.value = '';
-  categoryInput.value = '';
+  
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to create task'}`);
+      return;
+    }
+    
+    const task = await res.json();
+    addTaskToDOM(task);
+    taskInput.value = '';
+    categoryInput.value = '';
+  } catch (error) {
+    alert('Failed to create task. Please try again.');
+    console.error('Error creating task:', error);
+  }
 });
 
 async function toggleComplete(id, completed) {
-  await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ completed })
-  });
-  fetchTasks();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to update task'}`);
+      return;
+    }
+    
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to update task. Please try again.');
+    console.error('Error updating task:', error);
+  }
 }
 
 async function deleteTask(id) {
-  await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-  fetchTasks();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    
+    if (!res.ok) {
+      alert('Failed to delete task. Please try again.');
+      return;
+    }
+    
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to delete task. Please try again.');
+    console.error('Error deleting task:', error);
+  }
 }
 
 function openEditModal(id, title, category) {
@@ -137,14 +173,25 @@ editForm.addEventListener('submit', async e => {
   const title = editTaskInput.value;
   const category = editCategoryInput.value;
   
-  await fetch(`${API_URL}/${currentEditingTaskId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, category })
-  });
-  
-  closeEditModal();
-  fetchTasks();
+  try {
+    const res = await fetch(`${API_URL}/${currentEditingTaskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category })
+    });
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Error: ${error.message || 'Failed to update task'}`);
+      return;
+    }
+    
+    closeEditModal();
+    fetchTasks();
+  } catch (error) {
+    alert('Failed to update task. Please try again.');
+    console.error('Error updating task:', error);
+  }
 });
 
 // Add cancel button event listener

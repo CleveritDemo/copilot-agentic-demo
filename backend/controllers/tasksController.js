@@ -30,7 +30,7 @@ exports.createTask = (req, res) => {
   
   // Validate and process category
   let processedCategory = '';
-  if (category && typeof category !== 'string') {
+  if (category !== undefined && category !== null && typeof category !== 'string') {
     return res.status(400).json({ message: 'Category must be a string' });
   }
   if (category) {
@@ -70,10 +70,10 @@ exports.updateTask = (req, res) => {
   
   // Validate and process category if provided
   if (req.body.category !== undefined) {
-    if (typeof req.body.category !== 'string') {
+    if (req.body.category !== null && typeof req.body.category !== 'string') {
       return res.status(400).json({ message: 'Category must be a string' });
     }
-    const trimmedCategory = req.body.category.trim();
+    const trimmedCategory = req.body.category ? req.body.category.trim() : '';
     if (trimmedCategory.length > 100) {
       return res.status(400).json({ message: 'Category must not exceed 100 characters' });
     }
